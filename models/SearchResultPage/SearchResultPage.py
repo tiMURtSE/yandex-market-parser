@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import time
 
+from Product import Product
 from Browser import Browser
 
 class SearchResultPage(Browser):
@@ -18,7 +19,7 @@ class SearchResultPage(Browser):
     def __init__(self, elem_search_delay=5):
         super().__init__(elem_search_delay)
 
-    def get_product_page_links(self):
+    def get_product_page_links(self, product: Product):
         product_page_links = []
 
         if not self._has_search_results():
@@ -26,6 +27,7 @@ class SearchResultPage(Browser):
             return product_page_links
         
         self._set_filter_by_rating()
+        time.sleep(4)
 
         product_title_elements = self._browser.find_elements(By.CSS_SELECTOR, self.PRODUCT_TITLE_SELECTOR)
         print(f"Количество товаров: {len(product_title_elements)}")
@@ -34,10 +36,13 @@ class SearchResultPage(Browser):
             product_link = element.get_attribute("href")
             product_title = element.text
 
-            print(f"Название товара: {product_title}")
+            print(f"Артикул: {product.article.lower()}")
+            print(f"Название товара: {product_title.lower()}")
 
+            if product.article.lower() in product_title.lower():
+                product_page_links.append(product_link)
 
-
+        return product_page_links
 
     def _has_show_more_button(self):
         try:

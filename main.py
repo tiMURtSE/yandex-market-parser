@@ -20,16 +20,9 @@ class Main:
 
         for product in products[start_pos:]:
             self._main_page.search_product(product=product)
-            product.page_links = self._search_result_page.get_product_page_links()
+            product.page_links = self._search_result_page.get_product_page_links(product=product)
             
-            
-
-
-
-
-
-
-
+            print([link for link in product.page_links])
 
 
 
