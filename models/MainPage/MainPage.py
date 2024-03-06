@@ -3,7 +3,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 from Browser import Browser
-from Product import Product
+from models.YandexMarketProduct.YandexMarketProduct import YandexMarketProduct
 
 class MainPage(Browser):
     SEARCH_BAR_ID = "header-search"
@@ -11,8 +11,9 @@ class MainPage(Browser):
     def __init__(self, elem_search_delay=5):
         super().__init__(elem_search_delay)
 
-    def search_product(self, product: Product):
-        search_query = product.get_name()
+    def search_product(self, product: YandexMarketProduct):
+        # search_query = product.get_name()
+        search_query = product.article
         search_bar_element = self._find_search_bar()
 
         print(f"Поиск по {search_query}")

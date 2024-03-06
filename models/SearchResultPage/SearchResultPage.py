@@ -1,11 +1,10 @@
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import time
 
-from Product import Product
 from Browser import Browser
+from models.YandexMarketProduct.YandexMarketProduct import YandexMarketProduct
 
 class SearchResultPage(Browser):
     PRODUCT_WINDOW = "_1lpjN._1Oii8.cXkP_.gCOkS"
@@ -19,7 +18,7 @@ class SearchResultPage(Browser):
     def __init__(self, elem_search_delay=5):
         super().__init__(elem_search_delay)
 
-    def get_product_page_links(self, product: Product):
+    def get_product_page_links(self, product: YandexMarketProduct):
         product_page_links = []
 
         if not self._has_search_results():
@@ -30,18 +29,16 @@ class SearchResultPage(Browser):
         time.sleep(4)
 
         product_title_elements = self._browser.find_elements(By.CSS_SELECTOR, self.PRODUCT_TITLE_SELECTOR)
-        print(f"Количество товаров: {len(product_title_elements)}")
 
         for element in product_title_elements:
-            product_link = element.get_attribute("href")
             product_title = element.text
+            product_article = str(product.article)
 
-            print(f"Артикул: {product.article.lower()}")
-            print(f"Название товара: {product_title.lower()}")
-
-            if product.article.lower() in product_title.lower():
+            if product_article.lower() in product_title.lower():
+                product_link = element.get_attribute("href")
                 product_page_links.append(product_link)
 
+        print(f"Количество найденных товаров с нужным артикулом: {len(product_page_links)}")
         return product_page_links
 
     def _has_show_more_button(self):
@@ -55,8 +52,7 @@ class SearchResultPage(Browser):
         return True
     
     def _scroll_to_next_page(self):
-        # show_more_button_element = self._browser.find_element(By.CSS_SELECTOR, self.SHOW_MORE_BUTTON_SELECTOR)
-        show_more_button_element = self._browser.find_elements(By.CLASS_NAME, "_2AMPZ._1N_0H._1ghok._390_8")[0]
+        show_more_button_element = self._browser.find_element(By.CSS_SELECTOR, self.SHOW_MORE_BUTTON_SELECTOR)
 
         print(f"Кнопка: {show_more_button_element}")
         show_more_button_element.click()
@@ -85,7 +81,4 @@ class SearchResultPage(Browser):
     def _has_spellchecker(self):
         mysterious_element = self._browser.find_elements(By.CLASS_NAME, self.SPELLCHECKER)[0]
 
-        if "ничего не нашлось" in mysterious_element.text.lower():
-            return True
-        else:
-            return False
+        return "ничего не нашлось" in mysterious_element.text.lower()
