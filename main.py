@@ -6,7 +6,8 @@ from models.MainPage.MainPage import MainPage
 from models.SearchResultPage.SearchResultPage import SearchResultPage
 from models.ProductPage.ProductPage import ProductPage
 from models.ReviewsPage.ReviewsPage import ReviewsPage
-from models.ResultWorkbook.ResultWorkbook import ResultWorkbook
+from models.ReviewsWorkbook.ReviewsWorkbook import ReviewsWorkbook
+from models.YandexGPTReviewsWorkbook.YandexGPTReviewsWorkbook import YandexGPTReviewsWorkbook
 
 from consts import URL
 
@@ -18,14 +19,15 @@ class Main:
         self._search_result_page = SearchResultPage()
         self._product_page = ProductPage()
         self._reviews_page = ReviewsPage()
-        self._result_workbook = ResultWorkbook()
+        self._reviews_workbook = ReviewsWorkbook()
+        self._yandexGPT_reviews_workbook = YandexGPTReviewsWorkbook()
 
     def run(self):
         self._browser.get(URL)
-        time.sleep(15)
+        # time.sleep(15)
         products = self._export_workbook.convert_to_products()
         # start_pos = int(input("Номер товара, с которого нужно начать прохождение парсинг:\n"))
-        start_pos = 14
+        start_pos = 0
 
         for product in products[start_pos:]:
             self._main_page.search_product(product=product)
@@ -44,14 +46,15 @@ class Main:
                     self._browser.get(reviews_link)
                     reviews = self._reviews_page.get_reviews(product=product)
 
-                    product.reviews.extend(reviews)
-
+                    if reviews:
+                        product.reviews.extend(reviews)
                 else:
                     break
 
             if product.reviews:
                 print(f"Количество отзывов: {len(product.reviews)}")
-                self._result_workbook.write_result(product=product)
+                self._reviews_workbook.write_result(product=product)
+                self._yandexGPT_reviews_workbook.write_result(product=product)
 
 if __name__ == "__main__":
     app = Main()

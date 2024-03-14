@@ -74,8 +74,10 @@ class SearchResultPage(Browser):
                 EC.presence_of_element_located((By.CLASS_NAME, self.PRODUCT_WINDOW))
             )
         except:
+            print("Нет окна!")
             return False
         
+        print("Есть окно!")
         return True
     
     def _has_spellchecker(self):

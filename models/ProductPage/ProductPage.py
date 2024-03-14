@@ -4,7 +4,8 @@ from selenium.webdriver.common.by import By
 from Browser import Browser
 
 class ProductPage(Browser):
-    REVIEWS_BUTTON_SELECTOR = "._2IPu7 ._2AMPZ._1N_0H._1ghok._390_8._1BsVs"
+    REVIEWS_CLASS = "_3A1_K"
+    REVIEW_RATING_CLASS = "_2S7Nj _36m2h"
     YANDEXGPT_BLOCK_CLASS = "_2I1yE"
     PROS_SELECTOR = "#plus-circle-filled ~ span"
     CONS_SELECTOR = "#minus-circle-filled ~ span"
@@ -28,21 +29,19 @@ class ProductPage(Browser):
         }
     
     def get_review_page_link(self):
-        if self._has_reviews():
-            print("Отзывы есть")
-        else:
+        if not self._has_reviews():
             print("Отзывов нет")
             return
         
-        reviews_button_element = self._browser.find_element(By.CSS_SELECTOR, self.REVIEWS_BUTTON_SELECTOR)
-        reviews_page_link = reviews_button_element.get_attribute("href")
+        reviews_link_element = self._browser.find_element(By.CLASS_NAME, self.REVIEW_RATING_CLASS)
+        reviews_page_link = reviews_link_element.get_attribute("href")
 
         return reviews_page_link
 
     def _has_reviews(self):
         try:
             self._wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, self.REVIEWS_BUTTON_SELECTOR))
+                EC.presence_of_element_located((By.CLASS_NAME, self.REVIEW_RATING_CLASS))
             )
         except:
             return False

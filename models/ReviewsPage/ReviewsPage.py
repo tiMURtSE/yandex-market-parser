@@ -6,6 +6,7 @@ from models.YandexMarketProduct.YandexMarketProduct import YandexMarketProduct
 from models.Review.Review import Review
 
 class ReviewsPage(Browser):
+    REVIEWS_CLASS = "_3A1_K"
     NEXT_PAGE_BUTTON_CLASS = "_2prNU._3OFYT"
 
     def __init__(self, elem_search_delay=5):
@@ -13,6 +14,8 @@ class ReviewsPage(Browser):
 
     def get_reviews(self, product: YandexMarketProduct):
         reviews = []
+
+        self._wait.until(EC.presence_of_element_located((By.CLASS_NAME, self.REVIEWS_CLASS)))
 
         while True:
             reviews_from_single_page = self._browser.execute_script(self._get_script(id=product.id, article=product.article))
